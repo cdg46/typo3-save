@@ -1,0 +1,3 @@
+[submodule "TYPO3-backup"]
+	path = TYPO3-backup
+	url = https://github.com/Apen/TYPO3-backup.git
