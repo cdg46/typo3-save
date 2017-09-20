@@ -22,7 +22,7 @@ if [ -f $CONFIG_FILE ]
 fi
 
 # First of all, install dependencies
-INSTALL_PKGS="git rsync grep sed date mysql mysqldump tar rm awk"
+INSTALL_PKGS="curl rsync grep sed date mysql mysqldump tar rm awk"
 for pkgname in $INSTALL_PKGS; do
 	dpkg -s ${pkgname} 2>/dev/null >/dev/null || sudo apt-get -y --ignore-missings install ${pkgname}
 done
@@ -32,22 +32,22 @@ done
 # Functions
 send_to_mattermost()
 {
-	/usr/bin/curl -i -k -X POST -d "payload=$(generate_post_data '$1')" ${MATTERMOST}${CHANNEL}
+	/usr/bin/curl -i -k -X POST -d "$(generate_post_data '$1')" ${MATTERMOST_HOST}${MATTERMOST_CHANNEL}
 }
 
 generate_post_data()
 {
 	case $1 in
 		ok)
-			color="#ff0000"
+			color="#00ff00"
 			text=":thumbsup: la sauvegarde a réussie :thumbsup:."
 			;;
 		error)
-			color="#00ff00"
-			text=":thumbsdown: la sauvegarde a plantée, rsync ne c'est pas bien déroulé... $LOGFILE :thumbsdown:."
+			color="#ff0000"
+			text=":thumbsdown: la sauvegarde a plantée, rsync ne c'est pas bien déroulé... :thumbsdown:."
 			;;
 		*)
-			color="#00ff00"
+			color="#ff0000"
 			text=":thumbsdown: la sauvegarde a plantée, le serveur de sauvegarde n'est pas disponible :thumbsdown:."
 			;;
 	esac
@@ -84,6 +84,8 @@ if [ "$(ping -c 3  ${BACKUPHOST} | grep '0 received')" ]
 		exit 1
 fi
 
+# typo3-backup from Apen script
+./save-typo3.sh -p "${WEB_ROOT}" -o "${LOCAL_TARGET}"
 # RSYNC
 rsync -avz --remove-source-files ${LOCAL_TARGET} ${BACKUP_USER}@${BACKUP_HOST}:${BACKUP_TARGET}/$(date +%Y%m%d)/ --log-file="${LOGFILE}"
 if [ "$?" -eq "0" ]
