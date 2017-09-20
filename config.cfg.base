@@ -1,0 +1,21 @@
+# ./config.cfg
+#
+# Fichier de configuration de la sauvegarde
+###########################################
+# LOG
+LOGFILE="rsync_$(date +%Y%m%d)-result.log"
+
+# TYPO3 sauvegarde
+LOCAL_TARGET="/var/www/backup/"
+
+# Mattermost webhooks
+AUTHOR_NAME="$HOSTNAME"
+AUTHOR_LINK="http://`hostname -I | awk '{print $1}'`/typo3"
+MATTERMOST_HOST="MATTERMOST URL"
+MATTERMOST_CHANNEL="ztjtpahwytg7mcp66sxyjckn7a"
+DATESAVE="$(date)"
+
+# Serveur de sauvegarde
+BACKUP_HOST=XXX.XXX.XXX.XXX
+BACKUP_USER=user
+BACKUP_TARGET=/backup_folder
