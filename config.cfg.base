@@ -7,6 +7,7 @@ LOGFILE="rsync_$(date +%Y%m%d)-result.log"
 
 # TYPO3 sauvegarde
 LOCAL_TARGET="/var/www/backup/"
+WEB_ROOT="/var/www/html"
 
 # Mattermost webhooks
 AUTHOR_NAME="$HOSTNAME"
