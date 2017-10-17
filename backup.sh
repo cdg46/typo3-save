@@ -94,9 +94,10 @@ if [ "$(ping -c 3  ${BACKUP_HOST} | grep '0 received')" ]
 fi
 
 # typo3-backup from Apen script
+ACTUALSCRIPTPATH=$(pwd)
 cd ${WEB_ROOT}
-/bin/bash ~/typo3-save/TYPO3-backup/save-typo3.sh -f -p "${WEB_ROOT}" -o "${LOCAL_TARGET}typo3-$(date +%Y%m%d).tar.gz"
-cd ~/typo3-save
+/bin/bash $ACTUALSCRIPTPATH/TYPO3-backup/save-typo3.sh -f -p "${WEB_ROOT}" -o "${LOCAL_TARGET}typo3-$(date +%Y%m%d).tar.gz"
+cd $ACTUALSCRIPTPATH
 send_to_mattermost 'dump'
 
 # RSYNC
