@@ -11,13 +11,14 @@
 
 ## DO NOT CHANGE, JUST PUT RIGHT VALUES IN config.cfg
 # cp ./config.cfg.base ./config.cfg
+MY_PATH="`dirname \"$0\"`"
 source /etc/default/locale
-CONFIG_FILE=config.cfg
+CONFIG_FILE="${MY_PATH}/config.cfg"
 if [ -f $CONFIG_FILE ]
 	then
 		source $CONFIG_FILE
 	else
-		echo 'No conf file !!' >> $LOGFILE
+		echo 'No conf file !!' >> "${My_PATH}${LOGFILE}"
 		exit 1
 fi
 
@@ -97,12 +98,18 @@ fi
 # typo3-backup from Apen script
 ACTUALSCRIPTPATH=$(pwd)
 cd ${WEB_ROOT}
-/bin/bash $ACTUALSCRIPTPATH/TYPO3-backup/save-typo3.sh -f -p "${WEB_ROOT}" -o "${LOCAL_TARGET}typo3-$(date +%Y%m%d).tar.gz"
+/bin/bash $ACTUALSCRIPTPATH/TYPO3-backup/save-typo3.sh -f -p "${WEB_ROOT}" -o "${LOCAL_TARGET}typo3-${BACKUP_TAR_GZ_NAME}.tar.gz"
 cd $ACTUALSCRIPTPATH
 msg="dump"
 
 # RSYNC
-rsync -avz --remove-source-files ${LOCAL_TARGET} ${BACKUP_USER}@${BACKUP_HOST}:${BACKUP_TARGET}/$(date +%Y%m%d)/ --log-file="${LOGFILE}"
+if [ -z "$BACKUP_DIRECTORY_ENABLE" ]
+then
+rsync -avz --remove-source-files ${LOCAL_TARGET} ${BACKUP_USER}@${BACKUP_HOST}:${BACKUP_TARGET}/ --log-file="${LOGFILE}"
+else
+rsync -avz --remove-source-files ${LOCAL_TARGET} ${BACKUP_USER}@${BACKUP_HOST}:${BACKUP_TARGET}/${BACKUP_DIRECTORY_NAME}/ --log-file="${LOGFILE}"
+
+fi
 if [ "$?" -eq "0" ]
 then
 	msg="ok"
