@@ -21,6 +21,8 @@ if [ -f $CONFIG_FILE ]
 		exit 1
 fi
 
+msg=''
+
 # First of all, install dependencies
 INSTALL_PKGS="curl rsync grep sed date mysql mysqldump tar rm awk"
 for pkgname in $INSTALL_PKGS; do
@@ -81,7 +83,7 @@ EOF
 # Does Local folder exists ?
 if [ ! -d $LOCAL_TARGET ]; then
 		echo 'No local target for backup !!' >> $LOGFILE
-		send_to_mattermost "local"
+		msg="local"
 		exit 1
 fi
 
@@ -89,7 +91,6 @@ fi
 if [ "$(ping -c 3  ${BACKUP_HOST} | grep '0 received')" ]
 	then
 		echo 'No backup host up !!' >> $LOGFILE
-		send_to_mattermost
 		exit 1
 fi
 
@@ -98,14 +99,15 @@ ACTUALSCRIPTPATH=$(pwd)
 cd ${WEB_ROOT}
 /bin/bash $ACTUALSCRIPTPATH/TYPO3-backup/save-typo3.sh -f -p "${WEB_ROOT}" -o "${LOCAL_TARGET}typo3-$(date +%Y%m%d).tar.gz"
 cd $ACTUALSCRIPTPATH
-send_to_mattermost 'dump'
+msg="dump"
 
 # RSYNC
 rsync -avz --remove-source-files ${LOCAL_TARGET} ${BACKUP_USER}@${BACKUP_HOST}:${BACKUP_TARGET}/$(date +%Y%m%d)/ --log-file="${LOGFILE}"
 if [ "$?" -eq "0" ]
 then
-	send_to_mattermost "ok"
+	msg="ok"
 else
-	send_to_mattermost "error"
+	msg="error"
 fi
+send_to_mattermost "$msg"
 # That's all folks !!
